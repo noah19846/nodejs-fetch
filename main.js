@@ -1,4 +1,5 @@
 const http = require('http')
+const { PassThrough, pipeline } = require('stream')
 
 const { Headers, Request, Response } = require('./lib')
 
@@ -31,26 +32,18 @@ function fetch(input, init) {
             return
           }
 
-          let rawData = Buffer.alloc(0)
-
-          res.on('data', chunk => {
-            rawData = Buffer.concat([rawData, chunk])
+          let body = pipeline(res, new PassThrough(), error => {
+            reject(error)
           })
 
-          res.on('end', () => {
-            try {
-              resolve(
-                new Response(rawData, {
-                  status: statusCode,
-                  statusText: statusMessage,
-                  headers: res.headers,
-                  url: request.url
-                })
-              )
-            } catch (e) {
-              reject(e)
-            }
-          })
+          resolve(
+            new Response(body, {
+              status: statusCode,
+              statusText: statusMessage,
+              headers: res.headers,
+              url: request.url
+            })
+          )
         }
       )
       .on('error', e => {
