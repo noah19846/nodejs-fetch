@@ -6,7 +6,9 @@ const { Headers, Request, Response } = require('./lib')
 function fetch(input, init) {
   return new Promise((resolve, reject) => {
     const request = new Request(input, init)
-    const { headers = {} } = request
+    const headers = {}
+
+    request.headers.forEach((key, value) => (headers[key] = value))
 
     http
       .request(
