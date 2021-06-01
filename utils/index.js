@@ -1,5 +1,9 @@
 const NAME = Symbol.toStringTag
 
+function isVoid(value) {
+  return value === null || value === undefined
+}
+
 function isURLSearchParams(object) {
   return (
     typeof object === 'object' &&
@@ -42,5 +46,6 @@ module.exports = {
   isAbortSignal,
   isArrayBuffer,
   isBlob,
-  isURLSearchParams
+  isURLSearchParams,
+  isVoid
 }
